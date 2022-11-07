@@ -14,8 +14,8 @@ class User(Base):
     password_hash = sql.Column(sql.String)
 
     is_verified = sql.Column(sql.Boolean, default=False)
-    email_verification_hash = sql.Column(sql.String)
-    email_verification_expiry = sql.Column(sql.DateTime)
+    email_verification_hash = sql.Column(sql.String, default=None)
+    email_verification_expiry = sql.Column(sql.DateTime, default=None)
 
     is_admin = sql.Column(sql.Boolean, default=False)
 

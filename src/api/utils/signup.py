@@ -2,6 +2,7 @@ import re
 from schemas.user import OnCreateUser as OnCreateUserSchema
 from models.user import User as UserModel
 from sqlalchemy.orm import Session
+from services.auth import get_user_by_email
 import bcrypt
 
 class PasswordNotValidError(Exception):
@@ -34,7 +35,7 @@ def match_passwords(password: str, confirm_password: str):
     return True
 
 
-def create_user(user_data: OnCreateUserSchema, db: Session):
+async def create_user(user_data: OnCreateUserSchema, db: Session):
     password_hash = bcrypt.hashpw(password=user_data.password.encode(), salt=bcrypt.gensalt()).decode()
 
     user = UserModel(
@@ -43,7 +44,7 @@ def create_user(user_data: OnCreateUserSchema, db: Session):
         email=user_data.email,
         password_hash=password_hash
     )
-    if await db.query(UserModel).filter(UserModel.email == user.email).first():
+    if await get_user_by_email(user.email, db):
         raise UserAlreadyExistsError
     db.add(user)
     db.commit()

@@ -10,7 +10,7 @@ from utils.login import login_user, InvalidCredentialsError
 from services.auth import create_access_token
 from fastapi.security import OAuth2PasswordRequestForm
 from services.auth import get_current_user
-
+from utils.verify import send_verification_request,verify_email
 router = APIRouter()
 
 
@@ -41,7 +41,7 @@ async def signup(user_data: OnCreateUserSchema, db: Session = Depends(get_db)):
 @router.post("/login")
 async def login(user_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     try:
-        user = login_user(user_data, db)
+        user = await login_user(user_data, db)
     except InvalidCredentialsError:
         raise HTTPException(status_code=400, detail="Invalid credentials")
     return {
@@ -51,7 +51,7 @@ async def login(user_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 
 @router.post("/refresh")
 async def refresh(user: UserSchema = Depends(get_current_user)):
-    return {"access_token": await create_access_token(user), "token_type": "bearer"}
+    return {"access_token": create_access_token(user), "token_type": "bearer"}
 
 
 @router.post("/identify")
@@ -60,10 +60,14 @@ async def identify(user: UserSchema = Depends(get_current_user)):
 
 
 @router.get("/verify")
-async def verify():
-    pass
-
+async def verify(user: UserSchema = Depends(get_current_user), db: Session = Depends(get_db)):
+    await send_verification_request(user, db)
+    return {
+        "detail": "A message containing your verification code has been sent to your email."
+    }
 
 @router.post("/verify")
-async def verify():
-    pass
+async def verify(verification_code: str, user: UserSchema = Depends(get_current_user),
+                 db: Session = Depends(get_db)):
+    await verify_email(verification_code, user, db)
+    return {"detail": "Email has been verified successfully."}

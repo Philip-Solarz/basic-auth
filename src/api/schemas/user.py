@@ -1,24 +1,25 @@
 from pydantic import BaseModel
+from pydantic.schema import Optional
 
 
 class User(BaseModel):
-    id: int
-    first_name: str | None
-    last_name: str | None
-    email: str | None
-    is_verified: bool
-    is_admin: bool
+    id: Optional[int]
+    first_name: Optional[str]
+    last_name: Optional[str]
+    email: Optional[str]
+    is_verified: Optional[bool]
+    is_admin: Optional[bool]
 
     class Config:
         orm_mode = True
 
 
 class OnCreateUser(BaseModel):
-    first_name: str | None
-    last_name: str | None
-    email: str | None
-    password: str | None
-    confirm_password: str | None
+    first_name: Optional[str]
+    last_name: Optional[str]
+    email: Optional[str]
+    password: Optional[str]
+    confirm_password: Optional[str]
 
     class Config:
         orm_mode = True
