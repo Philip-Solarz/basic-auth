@@ -20,6 +20,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
   const [login, { isLoading }] = useLoginMutation();
 
@@ -29,6 +30,7 @@ const LoginPage: React.FC = () => {
       const credentials = {
         email,
         password,
+        rememberMe,
       };
       await login(credentials);
       navigate("/");
@@ -70,7 +72,11 @@ const LoginPage: React.FC = () => {
             value={password}
           />
           <Group position="apart" mt="md">
-            <Checkbox label="Remember me" />
+            <Checkbox
+              label="Remember me"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
             <Anchor component={Link} to="/reset-password">
               Forgot password?
             </Anchor>

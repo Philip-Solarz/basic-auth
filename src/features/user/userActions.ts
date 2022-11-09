@@ -8,10 +8,17 @@ import { RootState } from "../../store";
 // }
 
 export interface LoginResponse {
-  token: string;
+  access_token: string;
+  token_type: string;
+  remember_me: boolean;
 }
 export interface SignupResponse {
-  token: string;
+  access_token: string;
+  token_type: string;
+}
+export interface RefreshResponse {
+  access_token: string;
+  token_type: string;
 }
 
 export interface IdentifyResponse {
@@ -24,6 +31,7 @@ export interface IdentifyResponse {
 export interface LoginRequest {
   email: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export interface SignupRequest {
@@ -39,7 +47,6 @@ export const api = createApi({
     baseUrl: "http://localhost:8000",
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).user.token;
-      console.log(token);
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -52,7 +59,7 @@ export const api = createApi({
         url: "/login",
         method: "POST",
         body: JSON.stringify(
-          `grant_type=&username=${credentials.email}&password=${credentials.password}&scope=&client_id=&client_secret=`
+          `grant_type=&username=${credentials.email}&password=${credentials.password}&scope=${credentials.rememberMe}&client_id=&client_secret=`
         ),
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       }),
@@ -76,7 +83,18 @@ export const api = createApi({
         method: "GET",
       }),
     }),
+    refresh: builder.mutation<RefreshResponse, void>({
+      query: () => ({
+        url: "/refresh",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useSignupMutation, useIdentifyMutation } = api;
+export const {
+  useLoginMutation,
+  useSignupMutation,
+  useIdentifyMutation,
+  useRefreshMutation,
+} = api;

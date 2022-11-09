@@ -8,12 +8,13 @@ import {
   Button,
   Burger,
 } from "@mantine/core";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons";
-import { useAuth } from "../hooks/useAuth";
+// import { useAuth } from "../hooks/useAuth";
 import { logout } from "../features/user/userSlice";
 import { useAppDispatch } from "../hooks";
+import SecurityWrapper, { ClearanceLevels } from "../utils/SecurityWrapper";
 const HEADER_HEIGHT = 60;
 
 const useStyles = createStyles((theme) => ({
@@ -74,7 +75,8 @@ export interface Link {
 }
 
 const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
-  const user = useAuth();
+  // const user = useAuth();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { classes } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
@@ -130,7 +132,35 @@ const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
           {items}
         </Group>
         <Group>
-          {!user.isAuthenticated && (
+          <SecurityWrapper clearance={ClearanceLevels.Guest} isExclusive>
+            <Button variant="default" component={Link} to="/login">
+              Log in
+            </Button>
+          </SecurityWrapper>
+          <SecurityWrapper clearance={ClearanceLevels.Guest} isExclusive>
+            <Button component={Link} to="/signup">
+              Sign up
+            </Button>
+          </SecurityWrapper>
+          <SecurityWrapper clearance={ClearanceLevels.Verified}>
+            <Button component={Link} to="/subscribe">
+              Subscribe
+            </Button>
+          </SecurityWrapper>
+          <SecurityWrapper clearance={ClearanceLevels.User}>
+            <Button
+              variant="default"
+              type="button"
+              onClick={() => {
+                dispatch(logout());
+                navigate("/");
+              }}
+            >
+              Logout
+            </Button>
+          </SecurityWrapper>
+
+          {/* {!user.isAuthenticated && (
             <Button variant="default" component={Link} to="/login">
               Log in
             </Button>
@@ -149,11 +179,14 @@ const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
             <Button
               variant="default"
               type="button"
-              onClick={() => dispatch(logout())}
+              onClick={() => {
+                dispatch(logout());
+                navigate("/");
+              }}
             >
               Logout
             </Button>
-          )}
+          )} */}
         </Group>
       </Container>
     </Header>
