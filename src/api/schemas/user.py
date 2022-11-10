@@ -23,3 +23,9 @@ class OnCreateUser(BaseModel):
 
     class Config:
         orm_mode = True
+
+class OnVerifyUser(BaseModel):
+    verification_code: Optional[str]
+
+    class Config:
+        orm_mode = True

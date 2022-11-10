@@ -44,7 +44,7 @@ const SignupPage: React.FC = () => {
         confirmPassword,
       };
       await signup(credentials);
-      navigate("/");
+      navigate("/verify");
     } catch (error) {
       console.log(error);
     }

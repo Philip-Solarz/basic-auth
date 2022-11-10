@@ -5,7 +5,8 @@ import ResetPasswordPage from "./pages/ResetPassword";
 import SignupPage from "./pages/Signup";
 import HomePage from "./pages/Home";
 import ProfilePage from "./pages/Profile";
-import { PrivateOutlet, ClearanceLevels } from "./utils/PrivateOutlet";
+import VerifyEmailPage from "./pages/VerifyEmail";
+import { PrivateOutlet, UserType } from "./utils/PrivateOutlet";
 import { useEffect } from "react";
 import { useRefreshMutation } from "./features/user/userActions";
 
@@ -26,9 +27,25 @@ const App: React.FC = () => {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/" element={<HomePage />} />
           <Route
+            path="/verify"
+            element={
+              <PrivateOutlet
+                allowedUserTypes={[UserType.User, UserType.Admin]}
+              />
+            }
+          >
+            <Route index element={<VerifyEmailPage />} />
+          </Route>
+          <Route
             path="/profile"
             element={
-              <PrivateOutlet ClearanceLevel={ClearanceLevels.Verified} />
+              <PrivateOutlet
+                allowedUserTypes={[
+                  UserType.Verified,
+                  UserType.Subscribed,
+                  UserType.Admin,
+                ]}
+              />
             }
           >
             <Route index element={<ProfilePage />} />

@@ -14,7 +14,7 @@ import { IconChevronDown } from "@tabler/icons";
 // import { useAuth } from "../hooks/useAuth";
 import { logout } from "../features/user/userSlice";
 import { useAppDispatch } from "../hooks";
-import SecurityWrapper, { ClearanceLevels } from "../utils/SecurityWrapper";
+import SecurityWrapper, { UserType } from "../utils/SecurityWrapper";
 const HEADER_HEIGHT = 60;
 
 const useStyles = createStyles((theme) => ({
@@ -132,22 +132,34 @@ const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
           {items}
         </Group>
         <Group>
-          <SecurityWrapper clearance={ClearanceLevels.Guest} isExclusive>
+          <SecurityWrapper allowedUserTypes={[UserType.Guest]}>
             <Button variant="default" component={Link} to="/login">
               Log in
             </Button>
           </SecurityWrapper>
-          <SecurityWrapper clearance={ClearanceLevels.Guest} isExclusive>
+          <SecurityWrapper allowedUserTypes={[UserType.Guest]}>
             <Button component={Link} to="/signup">
               Sign up
             </Button>
           </SecurityWrapper>
-          <SecurityWrapper clearance={ClearanceLevels.Verified}>
+          <SecurityWrapper allowedUserTypes={[UserType.User]}>
+            <Button component={Link} to="/verify">
+              Verify
+            </Button>
+          </SecurityWrapper>
+          <SecurityWrapper allowedUserTypes={[UserType.Verified]}>
             <Button component={Link} to="/subscribe">
               Subscribe
             </Button>
           </SecurityWrapper>
-          <SecurityWrapper clearance={ClearanceLevels.User}>
+          <SecurityWrapper
+            allowedUserTypes={[
+              UserType.User,
+              UserType.Verified,
+              UserType.Subscribed,
+              UserType.Admin,
+            ]}
+          >
             <Button
               variant="default"
               type="button"

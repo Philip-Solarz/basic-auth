@@ -131,6 +131,12 @@ const userSlice = createSlice({
       localStorage.removeItem("token");
       return initialUserState;
     });
+    builder.addMatcher(
+      api.endpoints.postVerificationCode.matchFulfilled,
+      (state) => {
+        state.isVerified = true;
+      }
+    );
   },
 });
 

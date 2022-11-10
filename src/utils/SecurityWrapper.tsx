@@ -16,41 +16,63 @@ export enum ClearanceLevels {
   Admin = "Admin",
 }
 
+export enum UserType {
+  Guest = 0,
+  User = 100,
+  Verified = 200,
+  Subscribed = 300,
+  Admin = 999,
+}
+
 type Props = {
-  clearance: ClearanceLevels;
-  isExclusive?: boolean;
+  allowedUserTypes: UserType[];
+  // clearance: ClearanceLevels;
+  // isExclusive?: boolean;
   children: JSX.Element;
 };
 
 const SecurityWrapper = ({
-  clearance,
-  isExclusive = false,
+  allowedUserTypes,
+  // clearance,
+  // isExclusive = false,
   children,
 }: Props) => {
   const user = useAuth();
+  let userType = UserType.Guest;
+  if (user.isAuthenticated) userType = UserType.User;
+  if (user.isVerified) userType = UserType.Verified;
 
-  if (clearance === "Guest") {
-    if (isExclusive && !user.isAuthenticated) {
-      return <>{children}</>;
-    } else {
-      return <></>;
-    }
-  }
-  if (clearance === "User") {
-    if (!user.isAuthenticated) {
-      return <></>;
-    }
+  if (allowedUserTypes.includes(userType)) {
     return <>{children}</>;
+  } else {
+    return <></>;
   }
-  if (clearance === "Verified") {
-    if (!user.isAuthenticated) {
-      return <></>;
-    }
-    if (!user.isVerified) {
-      return <></>;
-    }
-    return <>{children}</>;
-  }
+
+  // if (clearance === "Guest") {
+  //   if (isExclusive && !user.isAuthenticated) {
+  //     return <>{children}</>;
+  //   } else {
+  //     return <></>;
+  //   }
+  // }
+  // if (clearance === "User") {
+  //   if (!isExclusive && user.isAuthenticated) {
+  //     return <>{children}</>;
+  //   }
+  //   if (isExclusive && !user.isVerified) {
+  //     return <>{children}</>;
+  //   }
+  //   return <></>;
+  // }
+  // if (clearance === "Verified") {
+  //   if (!user.isAuthenticated) {
+  //     return <></>;
+  //   }
+  //   if (!user.isVerified) {
+  //     return <></>;
+  //   }
+  //   return <>{children}</>;
+  // }
   // if (clearance === "Subscribed") {
   //   if (!user.isAuthenticated) {
   //     return;
@@ -96,7 +118,7 @@ const SecurityWrapper = ({
   //   }
   //   return {props.children};
   // }
-  return <>{children}</>;
+  // return <>{children}</>;
 };
 
 export default SecurityWrapper;

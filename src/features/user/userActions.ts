@@ -89,6 +89,21 @@ export const api = createApi({
         method: "GET",
       }),
     }),
+    getVerificationCode: builder.mutation<void, void>({
+      query: () => ({
+        url: "/verify",
+        method: "GET",
+      }),
+    }),
+    postVerificationCode: builder.mutation<void, string>({
+      query: (verificationCode) => ({
+        url: "/verify",
+        method: "POST",
+        body: {
+          verification_code: verificationCode,
+        },
+      }),
+    }),
   }),
 });
 
@@ -97,4 +112,6 @@ export const {
   useSignupMutation,
   useIdentifyMutation,
   useRefreshMutation,
+  useGetVerificationCodeMutation,
+  usePostVerificationCodeMutation,
 } = api;

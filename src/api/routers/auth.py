@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from schemas.user import OnCreateUser as OnCreateUserSchema
 from schemas.user import User as UserSchema
+from schemas.user import OnVerifyUser as OnVerifyUserSchema
 from sqlalchemy.orm import Session
 from db import get_db
 from email_validator import validate_email, EmailNotValidError
@@ -76,7 +77,8 @@ async def verify(user: UserSchema = Depends(get_current_user), db: Session = Dep
 
 
 @router.post("/verify")
-async def verify(verification_code: str, user: UserSchema = Depends(get_current_user),
+async def verify(verification_data: OnVerifyUserSchema, user: UserSchema = Depends(get_current_user),
                  db: Session = Depends(get_db)):
+    verification_code = verification_data.verification_code
     await verify_email(verification_code, user, db)
     return {"detail": "Email has been verified successfully."}
