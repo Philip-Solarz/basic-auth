@@ -7,14 +7,26 @@ import {
   Group,
   Button,
   Burger,
+  Avatar,
+  Text,
+  UnstyledButton,
 } from "@mantine/core";
 import { Link, useNavigate } from "react-router-dom";
+import { forwardRef } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown } from "@tabler/icons";
+import {
+  IconChevronDown,
+  IconSettings,
+  IconLogout,
+  IconUserPlus,
+  IconPremiumRights,
+  IconUserCheck,
+} from "@tabler/icons";
 // import { useAuth } from "../hooks/useAuth";
 import { logout } from "../features/user/userSlice";
 import { useAppDispatch } from "../hooks";
 import SecurityWrapper, { UserType } from "../utils/SecurityWrapper";
+import { useAuth } from "../hooks/useAuth";
 const HEADER_HEIGHT = 60;
 
 const useStyles = createStyles((theme) => ({
@@ -74,8 +86,47 @@ export interface Link {
   links?: Link2[];
 }
 
+interface UserButtonProps extends React.ComponentPropsWithoutRef<"button"> {
+  // image: string;
+  name: string;
+  email: string;
+  icon?: React.ReactNode;
+}
+
+const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
+  ({ name, email, icon, ...others }: UserButtonProps, ref) => (
+    <UnstyledButton
+      ref={ref}
+      sx={(theme) => ({
+        display: "block",
+        width: "100%",
+
+        color:
+          theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+      })}
+      {...others}
+    >
+      <Group>
+        <Avatar radius="xl" />
+
+        <div style={{ flex: 1 }}>
+          <Text size="sm" weight={500}>
+            {name}
+          </Text>
+
+          <Text color="dimmed" size="xs">
+            {email}
+          </Text>
+        </div>
+
+        {icon || <IconChevronDown size={16} />}
+      </Group>
+    </UnstyledButton>
+  )
+);
+
 const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
-  // const user = useAuth();
+  const user = useAuth();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { classes } = useStyles();
@@ -131,17 +182,8 @@ const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
         <Group spacing={5} className={classes.links}>
           {items}
         </Group>
-        <Group>
-          <SecurityWrapper allowedUserTypes={[UserType.Guest]}>
-            <Button variant="default" component={Link} to="/login">
-              Log in
-            </Button>
-          </SecurityWrapper>
-          <SecurityWrapper allowedUserTypes={[UserType.Guest]}>
-            <Button component={Link} to="/signup">
-              Sign up
-            </Button>
-          </SecurityWrapper>
+
+        {/* 
           <SecurityWrapper allowedUserTypes={[UserType.User]}>
             <Button component={Link} to="/verify">
               Verify
@@ -171,34 +213,79 @@ const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
               Logout
             </Button>
           </SecurityWrapper>
-
-          {/* {!user.isAuthenticated && (
+           */}
+        {/* </Group> */}
+        <Group position="center">
+          <SecurityWrapper allowedUserTypes={[UserType.Guest]}>
             <Button variant="default" component={Link} to="/login">
               Log in
             </Button>
-          )}
-          {!user.isAuthenticated && (
+          </SecurityWrapper>
+          <SecurityWrapper allowedUserTypes={[UserType.Guest]}>
             <Button component={Link} to="/signup">
               Sign up
             </Button>
-          )}
-          {user.isAuthenticated && (
-            <Button component={Link} to="/subscribe">
-              Subscribe
-            </Button>
-          )}
-          {user.isAuthenticated && (
-            <Button
-              variant="default"
-              type="button"
-              onClick={() => {
-                dispatch(logout());
-                navigate("/");
-              }}
+          </SecurityWrapper>
+          <SecurityWrapper
+            allowedUserTypes={[
+              UserType.User,
+              UserType.Verified,
+              UserType.Subscribed,
+              UserType.Admin,
+            ]}
+          >
+            <Menu
+              trigger="hover"
+              openDelay={100}
+              closeDelay={100}
+              width="target"
+              position="bottom-end"
             >
-              Logout
-            </Button>
-          )} */}
+              <Menu.Target>
+                <UserButton name={user.firstName!} email={user.email!} />
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Label>Application</Menu.Label>
+                <Menu.Item
+                  icon={<IconSettings size={14} />}
+                  component={Link}
+                  to="/settings"
+                >
+                  Settings
+                </Menu.Item>
+                <SecurityWrapper allowedUserTypes={[UserType.Verified]}>
+                  <Menu.Item
+                    icon={<IconUserCheck size={14} />}
+                    component={Link}
+                    to="/verify"
+                  >
+                    Get verified
+                  </Menu.Item>
+                </SecurityWrapper>
+                <SecurityWrapper allowedUserTypes={[UserType.Verified]}>
+                  <Menu.Item
+                    icon={<IconUserPlus size={14} />}
+                    component={Link}
+                    to="/subscribe"
+                  >
+                    Subscribe
+                  </Menu.Item>
+                </SecurityWrapper>
+
+                <Menu.Divider />
+                <Menu.Item
+                  color="red"
+                  icon={<IconLogout size={14} />}
+                  onClick={() => {
+                    dispatch(logout());
+                    navigate("/");
+                  }}
+                >
+                  Logout
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </SecurityWrapper>
         </Group>
       </Container>
     </Header>

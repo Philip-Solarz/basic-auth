@@ -5,6 +5,8 @@ import ResetPasswordPage from "./pages/ResetPassword";
 import SignupPage from "./pages/Signup";
 import HomePage from "./pages/Home";
 import ProfilePage from "./pages/Profile";
+import SettingsPage from "./pages/Settings";
+import AdminPage from "./pages/Admin";
 import VerifyEmailPage from "./pages/VerifyEmail";
 import { PrivateOutlet, UserType } from "./utils/PrivateOutlet";
 import { useEffect } from "react";
@@ -49,6 +51,27 @@ const App: React.FC = () => {
             }
           >
             <Route index element={<ProfilePage />} />
+          </Route>
+          <Route
+            path="/settings"
+            element={
+              <PrivateOutlet
+                allowedUserTypes={[
+                  UserType.User,
+                  UserType.Verified,
+                  UserType.Subscribed,
+                  UserType.Admin,
+                ]}
+              />
+            }
+          >
+            <Route index element={<SettingsPage />} />
+          </Route>
+          <Route
+            path="/admin"
+            element={<PrivateOutlet allowedUserTypes={[UserType.Admin]} />}
+          >
+            <Route index element={<AdminPage />} />
           </Route>
         </Routes>
       </Layout>

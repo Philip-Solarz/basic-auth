@@ -3,6 +3,7 @@ import { useAppDispatch } from "../hooks";
 import {
   useSignupMutation,
   useIdentifyMutation,
+  useGetVerificationCodeMutation,
 } from "../features/user/userActions";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -32,6 +33,7 @@ const SignupPage: React.FC = () => {
 
   const [signup, { isLoading: isSignupLoading }] = useSignupMutation();
   const [identify, { isLoading: isIdentifyLoading }] = useIdentifyMutation();
+  const [sendVerificationEmail] = useGetVerificationCodeMutation();
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,6 +46,7 @@ const SignupPage: React.FC = () => {
         confirmPassword,
       };
       await signup(credentials);
+      await sendVerificationEmail();
       navigate("/verify");
     } catch (error) {
       console.log(error);

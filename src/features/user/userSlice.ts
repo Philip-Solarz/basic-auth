@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
-import { api } from "./userActions";
+import { api, useGetVerificationCodeMutation } from "./userActions";
 import jwt_decode from "jwt-decode";
 
 type UserState = {
