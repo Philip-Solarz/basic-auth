@@ -10,6 +10,7 @@ import {
   Center,
   Modal,
   Anchor,
+  Tooltip,
   Drawer,
   useMantineTheme,
 } from "@mantine/core";
@@ -42,9 +43,12 @@ const SearchBar = () => {
         placeholder="Search"
         description={
           <Group position="apart">
-            <ActionIcon variant="transparent">
-              <IconInfoCircle size={18} />
-            </ActionIcon>
+            <Tooltip label="Search for anything" radius="md" color="blue">
+              <ActionIcon variant="transparent">
+                <IconInfoCircle size={18} />
+              </ActionIcon>
+            </Tooltip>
+
             <Group spacing={0}>
               <ActionIcon
                 variant="transparent"
