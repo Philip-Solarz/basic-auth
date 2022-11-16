@@ -8,6 +8,7 @@ import ProfilePage from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
 import AdminPage from "./pages/Admin";
 import VerifyEmailPage from "./pages/VerifyEmail";
+import SearchResultsPage from "./pages/SearchResults";
 import { PrivateOutlet, UserType } from "./utils/PrivateOutlet";
 import { useEffect } from "react";
 import { useRefreshMutation } from "./features/user/userActions";
@@ -66,6 +67,21 @@ const App: React.FC = () => {
             }
           >
             <Route index element={<SettingsPage />} />
+          </Route>
+          <Route
+            path="/search"
+            element={
+              <PrivateOutlet
+                allowedUserTypes={[
+                  UserType.User,
+                  UserType.Verified,
+                  UserType.Subscribed,
+                  UserType.Admin,
+                ]}
+              />
+            }
+          >
+            <Route index element={<SearchResultsPage />} />
           </Route>
           <Route
             path="/admin"

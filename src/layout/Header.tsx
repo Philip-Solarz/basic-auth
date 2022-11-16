@@ -8,10 +8,14 @@ import {
   Button,
   Burger,
   Avatar,
+  Title,
   Text,
+  Anchor,
+  TextInput,
   UnstyledButton,
+  ActionIcon,
 } from "@mantine/core";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, useMatch } from "react-router-dom";
 import { forwardRef } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -21,12 +25,16 @@ import {
   IconUserPlus,
   IconPremiumRights,
   IconUserCheck,
+  IconSearch,
+  IconArrowRight,
 } from "@tabler/icons";
 // import { useAuth } from "../hooks/useAuth";
 import { logout } from "../features/user/userSlice";
 import { useAppDispatch } from "../hooks";
 import SecurityWrapper, { UserType } from "../utils/SecurityWrapper";
 import { useAuth } from "../hooks/useAuth";
+import SearchBar from "../components/SearchBar";
+
 const HEADER_HEIGHT = 60;
 
 const useStyles = createStyles((theme) => ({
@@ -130,6 +138,8 @@ const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { classes } = useStyles();
+  const isSearchRoute = useMatch("/search");
+
   const [opened, { toggle }] = useDisclosure(false);
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
@@ -169,8 +179,36 @@ const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
   });
 
   return (
-    <Header height={HEADER_HEIGHT} mb="md">
+    <Header height={HEADER_HEIGHT}>
       <Container className={classes.inner} fluid>
+        <Group>
+          <Title
+            size={32}
+            variant="gradient"
+            style={{ letterSpacing: "0.25em", fontWeight: "300" }}
+          >
+            <Anchor component={Link} to="/" underline={false}>
+              Multiplex
+            </Anchor>
+          </Title>
+        </Group>
+        <Group>
+          {isSearchRoute && (
+            <TextInput
+              placeholder="Search"
+              // icon={<IconSearch size={18} stroke={1.5} />}
+              radius="xl"
+              size="md"
+              rightSection={
+                <ActionIcon variant="transparent" radius="xl" size="lg">
+                  <IconSearch size={18} stroke={1.5} />
+                </ActionIcon>
+              }
+
+              // onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          )}
+        </Group>
         <Group>
           <Burger
             opened={opened}
@@ -179,6 +217,7 @@ const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
             size="sm"
           />
         </Group>
+
         <Group spacing={5} className={classes.links}>
           {items}
         </Group>
@@ -222,7 +261,7 @@ const HeaderComponent: React.FC<{ links: Link[] }> = ({ links }) => {
             </Button>
           </SecurityWrapper>
           <SecurityWrapper allowedUserTypes={[UserType.Guest]}>
-            <Button component={Link} to="/signup">
+            <Button component={Link} to="/signup" variant="gradient">
               Sign up
             </Button>
           </SecurityWrapper>

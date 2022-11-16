@@ -1,10 +1,14 @@
 import React from "react";
-import { Container } from "@mantine/core";
+import { Container, Center } from "@mantine/core";
 import { useAuth } from "../hooks/useAuth";
-
+import SearchBar from "../components/SearchBar";
 const HomePage: React.FC = () => {
   const user = useAuth();
-  return <Container>{user.isAuthenticated && <p>{user.email}</p>}</Container>;
+  return (
+    <Container>
+      <SearchBar />
+    </Container>
+  );
 };
 
 export default HomePage;
